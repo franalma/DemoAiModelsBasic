@@ -13,7 +13,7 @@ from langchain_community.llms import Ollama
 import tiktoken
 
 
-class LangChain_Helper:
+class LangChainHelper:
     docsearch: None
     
     def split(self, chunk_size, overlap, text):
@@ -48,7 +48,7 @@ class LangChain_Helper:
         embeddings = OpenAIEmbeddings()
         self.docsearch = Pinecone.from_documents(texts, embeddings, index_name =index)
         
-    def find_similarity(self,input,index_name):
+    def find_similarity_with_openai(self,input,index_name):
         embedding = OpenAIEmbeddings()
         db = Pinecone.from_existing_index(index_name,embedding)
         # vectorstore = Pinecone(index_name=index_name, embedding=embedding)
@@ -56,6 +56,16 @@ class LangChain_Helper:
         # result = Pinecone.similarity_search_by_vector(embedding=openai_embs)
         result = db.similarity_search(input)
         print (result)
+        
+    def find_similarity_with_hugging_face(self,input,index_name):
+        embedding = HuggingFaceHelper().load_hugging_face_embbeding()    
+        db = Pinecone.from_existing_index(index_name,embedding)
+        # vectorstore = Pinecone(index_name=index_name, embedding=embedding)
+        # result = vectorstore.similarity_search(input)    
+        # result = Pinecone.similarity_search_by_vector(embedding=openai_embs)
+        result = db.similarity_search(input)
+        print (result)
+
         
         
     def generate_interaction_with_openai(self, input, index_name):
@@ -67,7 +77,7 @@ class LangChain_Helper:
         response = chain.run(input)
         return response
     
-    def generate_interaction_with_hugging(self, input, index_name):
+    def generate_interaction_with_hugging(self, input, index_name='langchain-index'):
         hugging_helper = HuggingFaceHelper()
         # llm = hugging_helper.load_hugging_face_llm()
         llm = Ollama(model="mistral")

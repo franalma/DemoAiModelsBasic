@@ -2,13 +2,13 @@ import os
 from dotenv import load_dotenv, find_dotenv
 from open_ai_helper import OpenAI_Helper
 from pine_cone_helper import PineCone_Helper
-from lang_chain_helper import LangChain_Helper
+from lang_chain_helper import LangChainHelper
 import numpy as np
 
 
 ai_helper = OpenAI_Helper()
 pine_cone_helper = PineCone_Helper()
-lang_helper = LangChain_Helper()
+lang_helper = LangChainHelper()
 PC_INDEX_NAME = 'langchain-index'
 
 
@@ -50,11 +50,13 @@ def create_embeddings():
     input_value = split_file()
     lang_helper.put_embbeded(input_value, PC_INDEX_NAME)
 
-
-def run_question(question):
-    emb = lang_helper.create_embbedings(text=question)
+def run_question_without_llm(question,option):
+    # emb = lang_helper.create_embbedings(text=question)
     # response = pine_cone_helper.search(query_vector=emb, index_name=PC_INDEX_NAME)
-    lang_helper.find_similarity(input=question, index_name=PC_INDEX_NAME)
+    if option ==0:
+        lang_helper.find_similarity_with_openai(input=question, index_name=PC_INDEX_NAME)
+    else:
+        lang_helper.find_similarity_with_hugging_face(input=question, index_name=PC_INDEX_NAME)
   
 def run_question_with_llm(question, option):
     if (option == 0):    
@@ -78,7 +80,8 @@ def print_menu():
         print("========================")
         print("1. Init (optional)")
         print("2. Create embeddings for solar.txt")
-        print("3. Use exisiting index without LLM")
+        print("3. Use exisiting index without LLM (openAI) ")
+        print("3.1. Use exisiting index without LLM (HF)")
         print("4. Use exisiting index with OpenAI LLM")
         print ("5. Load pdf file to db")
         print("6. Create PineCone index (openAI=1536; hugging = 768)")
@@ -94,13 +97,15 @@ def print_menu():
             create_embeddings()
         elif value == "3":
             question = input ("Introduce una pregunta: ")
-            run_question(question)
+            run_question_without_llm(question,0)
+        elif value == "3.1":
+            question = input ("Introduce una pregunta: ")
+            run_question_without_llm(question,1)
         elif value == "4":
             question = input ("Introduce una pregunta: ")
             run_question_with_llm(question,0)    
         elif value == "5":
-            # path = input ("Introduce el path del archivo pdf:  ")
-            path = "pdf_solar.pdf"
+            path = input ("Introduce el path del archivo pdf:  ")            
             load_file(path, 0)
         elif value == "6":
             index_size  = input("Introduce la longitud del índice: ")
@@ -108,22 +113,16 @@ def print_menu():
         elif (value == "7"):
             pine_cone_helper.remove_index()
         elif (value == "8"):
-            path = "pdf_solar_energy.pdf"        
+            path = input("Introduce el nombre de fichero: ")      
             load_file(path, 1)
         elif (value == "9"):
             question = input ("Introduce una pregunta: ")    
             run_question_with_llm(question,1)    
-        
-
         elif value == 0:
             break
-            
-    
-           
-        
+                    
 init()
-run_question_with_llm("What is solar energy?",1)    
-# print_menu() 
+print_menu() 
 
 
 
