@@ -1,6 +1,6 @@
 from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
-from image2Text import Image2TextModel
+from image_text.image2Text import Image2TextModel
 import io
 
 app = FastAPI()

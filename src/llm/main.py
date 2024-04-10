@@ -88,6 +88,7 @@ def print_menu():
         print("7. Delete PineCone index")
         print("8. Create embedding with Hugging Face model")
         print("9. Use exisiting index with Hugging Face LLM")
+        print ("10. Load pdf from directory")
         print ("0. Exit")
         value= input("Seleccine una opción:")
         
@@ -118,8 +119,22 @@ def print_menu():
         elif (value == "9"):
             question = input ("Introduce una pregunta: ")    
             run_question_with_llm(question,1)    
+        elif (value == "10"):
+            path = input ("Introduce el path del directorio: ")
+            list = os.listdir(path)
+            files = []
+            for f in list:
+                if os.path.isfile(f):
+                    files.insert(f)
+                else: 
+                    list.append(os.listdir(f))                    
+                
+                
+            
+            print (files)            
         elif value == 0:
             break
+        
                     
 init()
 print_menu() 
