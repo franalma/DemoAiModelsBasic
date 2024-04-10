@@ -80,14 +80,14 @@ class LangChainHelper:
     def generate_interaction_with_hugging(self, input, index_name='langchain-index'):
         hugging_helper = HuggingFaceHelper()
         # llm = hugging_helper.load_hugging_face_llm()
-        llm = Ollama(model="mistral")
+        llm = Ollama(model="neural-chat:7b-v3.3-q6_K")
         embedding = hugging_helper.load_hugging_face_embbeding()
         response = None
         
-        template = """Answer the question based only on the following context:
+        template = """Contesta las preguntas detalladamente según el contexto actual. Si es posible dame las referencias de page y source:
         {context}
 
-        Question: {question}
+        Pregunta: {question}
         """
         prompt = ChatPromptTemplate.from_template(template)
         db = Pinecone.from_existing_index(index_name,embedding)
